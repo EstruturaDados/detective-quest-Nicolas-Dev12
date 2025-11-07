@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Estrutura da árvore binária: cada nó é uma sala
+struct Sala {
+    char nome[50];            // Nome da sala
+    struct Sala *esquerda;    // Caminho à esquerda
+    struct Sala *direita;     // Caminho à direita
+};
+
+// Função que cria uma nova sala (nó da árvore)
+struct Sala* criarSala(const char *nome) {
+    struct Sala *novaSala = (struct Sala*) malloc(sizeof(struct Sala));
+
+    if (novaSala == NULL) {
+        printf("Erro ao alocar memoria para a sala!\n");
+        exit(1);
+    }
+
+    strcpy(novaSala->nome, nome);
+    novaSala->esquerda = NULL;
+    novaSala->direita = NULL;
+
+    return novaSala;
+}
+
+// Função que permite explorar as salas de forma interativa
+void explorarSalas(struct Sala *atual) {
+    int escolha;
+
+    while (atual != NULL) {
+        printf("\nVocê está em: %s\n", atual->nome);
+
+        // Verifica se a sala é um nó folha
+        if (atual->esquerda == NULL && atual->direita == NULL) {
+            printf("Você chegou ao fim do caminho! Não há mais portas.\n");
+            break;
+        }
+
+        printf("Escolha um caminho:\n");
+        if (atual->esquerda != NULL) printf(" (1) Ir para %s\n", atual->esquerda->nome);
+        if (atual->direita != NULL) printf(" (2) Ir para %s\n", atual->direita->nome);
+        printf(" (3) Sair da mansão\n");
+        printf("→ Sua escolha: ");
+        scanf("%d", &escolha);
+
+        if (escolha == 1 && atual->esquerda != NULL) {
+            atual = atual->esquerda;
+        } else if (escolha == 2 && atual->direita != NULL) {
+            atual = atual->direita;
+        } else if (escolha == 3) {
+            printf("\nVocê decidiu sair da mansão.\n");
+            break;
+        } else {
+            printf("\nOpção inválida! Tente novamente.\n");
+        }
+    }
+}
+
+// Função principal: monta o mapa e inicia o jogo
+int main() {
+    /*Breve ilustração de com vai ficar a Árvore Binária
+        Estrutura da mansão (árvore binária):
+
+                  [Hall de Entrada]
+                     /         \
+           [Sala de Estar]     [Cozinha]
+              /       \           \
+     [Biblioteca] [Jardim]     [Porão]
+    */
+
+    struct Sala *hall = criarSala("Hall de Entrada");
+    struct Sala *salaEstar = criarSala("Sala de Estar");
+    struct Sala *cozinha = criarSala("Cozinha");
+    struct Sala *biblioteca = criarSala("Biblioteca");
+    struct Sala *jardim = criarSala("Jardim");
+    struct Sala *porao = criarSala("Porão");
+
+    // Montagem manual da árvore
+    hall->esquerda = salaEstar;
+    hall->direita = cozinha;
+    salaEstar->esquerda = biblioteca;
+    salaEstar->direita = jardim;
+    cozinha->direita = porao;
+
+    printf(" Bem-vindo ao Detective Quest!\n");
+    printf("Explore a mansão e descubra o que há em cada sala! Boa sorte...\n");
+
+    explorarSalas(hall);
+
+    free(porao);
+    free(jardim);
+    free(biblioteca);
+    free(cozinha);
+    free(salaEstar);
+    free(hall);
+
+    printf("\n Jogo encerrado. \n");
+    return 0;
+}
